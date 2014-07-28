@@ -12,7 +12,6 @@ canvas = Canvas(master, width=WINDOW_WIDTH, height=WINDOW_HEIGHT)
 canvas.pack()
 random.seed()
 
-
 def generateBuildings(event):
 	numBuildings = 50
 	buildings = []
