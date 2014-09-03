@@ -37,7 +37,7 @@ def generateBuildings(event):
 		lastBuildingHeight = newBuilding.size[1]
 
 	canvas.delete("all")
-	canvas.create_rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, fill="black")
+	canvas.create_rectangle(0, 0, WINDOW_WIDTH + 2, WINDOW_HEIGHT + 2, fill="black")
 
 	for building in buildings:
 		building.draw(canvas)
