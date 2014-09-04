@@ -2,48 +2,59 @@ from Tkinter import *
 
 import random
 from window import Window
+from basics import Size, Point, AspectRatio, removeAllChildren
 
-APPROX_WINDOW_WIDTH = 40.0
-APPROX_WINDOW_HEIGHT = 60.0
-WINDOW_BUFFER = 8.0
+class WindowData():
+    def __init__(self, window, origin):
+        self.window = window
+        self.origin = origin
 
 class Building():
-	def __init__(self, origin, size, color):
-		self.origin = origin
-		self.size = size
-		self.color = color
+    requestedAspectRatio = AspectRatio(2.0)
+    approxNumberOfFloors = 6
 
-		self.generateWindows()
+    def __init__(self, size):
+	self.size = size
 
-	def generateWindows(self):
-		self.windows = []
+        self.generateWindows()
 
-		numberOfWindowRows = int(self.size[1] / APPROX_WINDOW_HEIGHT)
-		numberOfWindowColumns = int(self.size[0] / APPROX_WINDOW_WIDTH)
+    def generateWindows(self):
+        self.windowDatas = []
 
-		numberOfWindowRows += random.randint(1, 2)
-		numberOfWindowColumns += random.randint(1, 2)
+        numberOfWindowRows = Building.approxNumberOfFloors + random.randint(-1, 1)
+        windowHeight = float(self.size.height) / numberOfWindowRows
 
-		windowWidth = float(self.size[0] - WINDOW_BUFFER) / numberOfWindowColumns
-		windowHeight = float(self.size[1] - WINDOW_BUFFER) / numberOfWindowRows
+        windowWidth = Window.requestedAspectRatio.widthForHeight(windowHeight)
+        numberOfWindowColumns = int(self.size.width / windowWidth)
+        windowWidth += (self.size.width - (numberOfWindowColumns * windowWidth)) / numberOfWindowColumns
 
-		windowWidth -= WINDOW_BUFFER
-		windowHeight -= WINDOW_BUFFER
+        windowVerticalPadding = windowHeight * Window.requestedVerticalPadding
+        windowHeight -= (windowVerticalPadding * (numberOfWindowRows + 1)) / numberOfWindowRows
 
-		for i in range(0, numberOfWindowColumns):
-			for j in range(0, numberOfWindowRows):
-				newWindowX = ((i + 1) * WINDOW_BUFFER + i * windowWidth)
-				newWindowY = ((j + 1) * WINDOW_BUFFER + j * windowHeight)
-				newWindow = Window((int(self.origin[0] + newWindowX), int(self.origin[1] + newWindowY)),
-								   (int(windowWidth), int(windowHeight)),
-								   "black")
-				self.windows.append(newWindow)
+        windowHorizontalPadding = windowWidth * Window.requestedHorizontalPadding
+        windowWidth -= (windowHorizontalPadding * (numberOfWindowColumns + 1)) / numberOfWindowColumns
 
-	def draw(self, canvas):
-		canvas.create_rectangle(self.origin[0], self.origin[1],
-								self.origin[0] + self.size[0],
-								self.origin[1] + self.size[1],
-								fill=self.color)
+        for i in range(0, numberOfWindowColumns):
+            for j in range(0, numberOfWindowRows):
+                windowSize = Size(windowWidth, windowHeight)
+                window = Window(windowSize)
 
-		for window in self.windows:
-			window.draw(canvas)
+                windowX = ((i + 1) * windowHorizontalPadding + i * windowWidth)
+                windowY = ((j + 1) * windowVerticalPadding + j * windowHeight)
+                windowOrigin = Point(windowX, windowY)
+                
+                windowData = WindowData(window, windowOrigin)
+                self.windowDatas.append(windowData)
+
+    def draw(self, canvas):
+        removeAllChildren(canvas)
+        canvas.delete("all")
+        canvas.create_rectangle(0, 0, self.size.width, self.size.height, fill="white")
+
+        for windowData in self.windowDatas:
+            window = windowData.window
+            windowCanvas = Canvas(canvas, width=window.size.width, height=window.size.height, highlightthickness=0)
+            windowCanvas.pack()
+            windowCanvas.place(x=windowData.origin.x, y=windowData.origin.y)
+
+            window.draw(windowCanvas)

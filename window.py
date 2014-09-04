@@ -1,13 +1,16 @@
 from Tkinter import *
 
-class Window():
-	def __init__(self, origin, size, color):
-		self.origin = origin
-		self.size = size
-		self.color = color
+from basics import Size, AspectRatio, removeAllChildren
 
-	def draw(self, canvas):
-		canvas.create_rectangle(self.origin[0], self.origin[1],
-								self.origin[0] + self.size[0],
-								self.origin[1] + self.size[1],
-								fill=self.color)
+class Window():
+    requestedAspectRatio = AspectRatio(1.5)
+    requestedHorizontalPadding = 0.25
+    requestedVerticalPadding = 0.3
+
+    def __init__(self, size):
+        self.size = size
+
+    def draw(self, canvas):
+        removeAllChildren(canvas)
+        canvas.delete("all")
+        canvas.create_rectangle(0, 0, self.size.width, self.size.height, fill="black")
