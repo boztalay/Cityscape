@@ -7,8 +7,8 @@ WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 600
 STREET_LEVEL = 480
 
-BUILDING_WIDTH_LIMITS = (100, 200)
-BUILDING_HEIGHT_LIMITS = (100, 450)
+BUILDING_WIDTH_LIMITS = (75, 200)
+BUILDING_HEIGHT_LIMITS = (125, 450)
 BUILDING_HEIGHT_DELTA_MIN = 0.1
 
 master = Tk()
@@ -28,7 +28,7 @@ def generateBuildings(event):
 			   newBuildingHeight < ((1.0 + BUILDING_HEIGHT_DELTA_MIN) * lastBuildingHeight)):
 			newBuildingHeight = random.randint(BUILDING_HEIGHT_LIMITS[0], BUILDING_HEIGHT_LIMITS[1])
 
-		newBuilding = Building((currentBuildingStartX, STREET_LEVEL),
+		newBuilding = Building((currentBuildingStartX, STREET_LEVEL - newBuildingHeight),
 							   ((random.randint(BUILDING_WIDTH_LIMITS[0], BUILDING_WIDTH_LIMITS[1]), newBuildingHeight)),
 							   "white")
 		buildings.append(newBuilding)
@@ -42,6 +42,10 @@ def generateBuildings(event):
 	for building in buildings:
 		building.draw(canvas)
 
+def quit(event):
+	master.quit()
+
 generateBuildings(None)
 master.bind("r", generateBuildings)
+master.bind("q", quit)
 mainloop()
