@@ -2,7 +2,7 @@ from Tkinter import *
 
 import random
 from window import Window
-from basics import Size, Point, AspectRatio, removeAllChildren
+from basics import Size, Point, AspectRatio, modulateValue, removeAllChildren
 
 class WindowData():
     def __init__(self, window, origin):
@@ -10,8 +10,13 @@ class WindowData():
         self.origin = origin
 
 class Building():
-    requestedAspectRatio = AspectRatio(2.0)
-    approxNumberOfFloors = 6
+    @staticmethod
+    def requestedAspectRatio():
+        return AspectRatio(2.0)
+
+    @staticmethod
+    def approxNumberOfFloors():
+        return 6
 
     def __init__(self, size):
 	self.size = size
@@ -21,7 +26,7 @@ class Building():
     def generateWindows(self):
         self.windowDatas = []
 
-        numberOfWindowRows = Building.approxNumberOfFloors + random.randint(-1, 1)
+        numberOfWindowRows = int(round(modulateValue(self.approxNumberOfFloors(), 0.13)))
         windowHeight = float(self.size.height) / numberOfWindowRows
 
         windowWidth = Window.requestedAspectRatio.widthForHeight(windowHeight)
@@ -58,3 +63,21 @@ class Building():
             windowCanvas.place(x=windowData.origin.x, y=windowData.origin.y)
 
             window.draw(windowCanvas)
+
+class TallBuilding(Building):
+    @staticmethod
+    def requestedAspectRatio():
+        return AspectRatio(3.5)
+
+    @staticmethod
+    def approxNumberOfFloors():
+        return 12
+
+class ShortBuilding(Building):
+    @staticmethod
+    def requestedAspectRatio():
+        return AspectRatio(0.75)
+
+    @staticmethod
+    def approxNumberOfFloors():
+        return 3

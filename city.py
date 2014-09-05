@@ -1,7 +1,7 @@
 from Tkinter import *
 
 import random
-from building import Building
+from building import Building, TallBuilding, ShortBuilding
 from basics import Point, Size, AspectRatio, modulateValue, removeAllChildren
 
 STREET_LEVEL_FACTOR = 0.8
@@ -25,11 +25,14 @@ class City():
 
 	currentBuildingX = int(-random.random() * self.approxBuildingWidth)
 
+        buildingTypes = [Building, TallBuilding, ShortBuilding]
 	while (currentBuildingX < self.size.width):
+            buildingType = buildingTypes[random.randint(0, len(buildingTypes) - 1)]
+
             buildingWidth = int(modulateValue(self.approxBuildingWidth, 0.25))
-            buildingHeight = int(modulateValue(Building.requestedAspectRatio.heightForWidth(buildingWidth), 0.1))
+            buildingHeight = int(modulateValue(buildingType.requestedAspectRatio().heightForWidth(buildingWidth), 0.1))
             buildingSize = Size(buildingWidth, buildingHeight)
-            building = Building(buildingSize)
+            building = buildingType(buildingSize)
 
             buildingOrigin = Point(currentBuildingX, self.streetLevel - buildingHeight)
 
